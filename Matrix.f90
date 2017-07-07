@@ -1,7 +1,4 @@
 PROGRAM WAFFLE
-
-!Compile with gfortran Matrix.f90 -llapack
-
 real:: g
 real:: matrix(1:6,1:6),eig(1:6)
 real:: work(100)
