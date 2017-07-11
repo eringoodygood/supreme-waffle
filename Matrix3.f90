@@ -6,7 +6,9 @@ integer:: nP, nS, nC,deg
 integer,allocatable::states(:,:),lastc(:),vvec(:)
 character:: unb
 
+!Open the eigenvalues files
 open(unit=2,file="eigen.dat")
+!Input
 write(*,*) 'Write the number of particles'
 read(*,*) nP
 write(*,*) 'Write the number of states'
@@ -24,7 +26,7 @@ endif
 write(*,*) 'Unbroken pairs? (y/n)'
 read(*,*) unb
 
-
+!Count the number of combinations
 if (unb.eq.'y') then
 	nC=INT(factorial(nS/2)/(factorial(nP/2)*factorial((nS-nP)/2)))
 else if (unb.eq.'n') then
@@ -34,10 +36,11 @@ write(*,*) "Dumb idiot"
 	return
 endif
 
-
+!Matrix initialization and allocation
 allocate(states(nC,nS),lastc(nP),vvec(nS))
 states=0
 
+!Create first state 1234...
 k=1
 do i=1,nP
 	states(1,i)=1
@@ -45,8 +48,9 @@ do i=1,nP
 	k=k+1
 enddo
 
-
+!Creation of list of states
 do i=2,nC
+!Broken couples states list
 	if(unb.eq.'n') then
 		do j=0,nP-1
 			lastc(nP-j)=lastc(nP-j)+1
@@ -60,6 +64,7 @@ do i=2,nC
 			if(lastc(j).eq.0) lastc(j)=lastc(j-1)+1
 		enddo
 	else
+!Unbroken couples states list
 		do j=1,nP-1,2
 			lastc(nP-j)=lastc(nP-j)+2
 			lastc(nP-j+1)=lastc(nP-j+1)+2
@@ -74,6 +79,7 @@ do i=2,nC
 			if(lastc(j).eq.0) lastc(j)=lastc(j-1)+1
 		enddo
 	endif
+!Transformation to bit
 	do j=1,nP
 		k=lastc(j)
 		states(i,k)=1
@@ -83,7 +89,7 @@ enddo
 
 
 
-
+!Allocation Hamiltonian matrix + workspace diagonalization
 allocate (matrix(1:nC,1:nC),eig(1:nC),work(1:3*nC))
 
 do l=1,200
@@ -93,11 +99,14 @@ do l=1,200
 	do j=1,nC
 	!interaction  
 		do k=1,nS-1
+			!Check for unbroken couple
 	        	if(mod(k+1,deg).ne.1.and.states(j,k).eq.1.and.states(j,k+1).eq.1) then
 	        	do p=1,nS-1
 	        	vvec(:)=states(j,:)
+	        	!Annihilation
 	       		vvec(k)=0
 	       		vvec(k+1)=0
+	       		!Check if right creation + comparison
        			if(mod(p+1,deg).ne.1.and.vvec(p).eq.0.and.vvec(p+1).eq.0) then
 				vvec(p)=1
 				vvec(p+1)=1
@@ -122,13 +131,15 @@ do l=1,200
 
 	work=0
 	info=0
-
+!Diagonalization
 	call ssyev('v', 'u', nC , matrix, nC ,eig, work,3*nC, info )
+!Writing on file
 	write(2,*) g, eig(1:nC)
 
 enddo
+!Close the file
 close(2)
-deallocate(states)
+deallocate(states,matrix,vvec,eig,lastc,work)
 RETURN
 
 
