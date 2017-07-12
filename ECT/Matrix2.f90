@@ -31,7 +31,7 @@ nS=12
 nP=8
 nC=INT(factorial(nS)/(factorial(nP)*factorial(nS-nP)))
 
-allocate(states(nC,nP),vmatrix(nS,nS,nS,nS),h_0(nP))
+allocate(states(nC,nP),vmatrix(nS,nS,nS,nS),h_0(nS))
 k=1
 do i=1,nP
 	states(1,i)=k
@@ -56,6 +56,8 @@ enddo
 
 
 allocate (matrix(1:nC,1:nC),eig(1:nC),work(1:3*nC))
+
+vmatrix=0.d0
 
 do p=1,343
 	call get_filled_ar (ar)
@@ -90,14 +92,9 @@ do i=1,nC
 enddo
 
 do i=1,nC  
-	do j=1,nC
-		do k=1,nP
-			do l=1,nP
-				p1=states(i,k)
-				p2=states(j,l)
-				!if(p1.eq.p2) matrix(i,j)=matrix(i,j)+h_0(p1)
-			enddo
-		enddo
+	do k=1,nP
+		p1=states(i,k)
+		matrix(i,i)=matrix(i,i)+h_0(p1)
 	enddo
 enddo
 work=0
@@ -105,7 +102,7 @@ info=0
 
 call ssyev('v', 'u', nC , matrix, nC ,eig, work,3*nC, info )
 write(2,*) g, eig(1:nC)
-write(*,*) 'Yeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
+write(*,*) 'Yeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee', nP, nC, nS
 write(*,*) g, eig(1:nC)
 
 !enddo
