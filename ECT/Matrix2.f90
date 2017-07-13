@@ -3,15 +3,21 @@ PROGRAM WAFFLE
 use iso_c_binding
 implicit none
 interface c_interface
-   subroutine get_filled_ar (ar) bind (C, name = "get_filled_ar")
+   subroutine get_filled_ar (nb,ar) bind (C, name = "get_filled_ar")
    use iso_c_binding
    implicit none
    real (c_float), intent (out), dimension (*) :: ar
+   integer (c_int), value ::nb
    end subroutine get_filled_ar
-   subroutine open_file() bind (C, name = "open")
+   subroutine open_file(stringArray) bind (C, name = "open")
    use iso_c_binding
    implicit none
-   end subroutine open_file
+   CHARACTER(LEN=1), TARGET :: stringArray
+   end subroutine open_file   
+   subroutine close_file() bind (C, name = "close")
+   use iso_c_binding
+   implicit none
+   end subroutine close_file
 end interface c_interface
 
 
@@ -21,15 +27,17 @@ integer:: i,j,k,l,k2,l2,m,p,info,p1,p2,p3,p4
 integer:: nP, nS, nC,deg
 integer,allocatable::states(:,:)
 character:: unb
-real (c_float), dimension (0:4) :: ar
+real (c_float), dimension (0:5) :: ar
 
 open(unit=2,file="eigen.dat")
 
+!stringPtrs(ns) = C_LOC(stringArray(ns))
 
-call open_file
+call open_file("data.dat")
 nS=12
 nP=8
 nC=INT(factorial(nS)/(factorial(nP)*factorial(nS-nP)))
+
 
 allocate(states(nC,nP),vmatrix(nS,nS,nS,nS),h_0(nS))
 k=1
@@ -57,18 +65,31 @@ enddo
 
 allocate (matrix(1:nC,1:nC),eig(1:nC),work(1:3*nC))
 
-vmatrix=0.d0
 
+vmatrix=0.d0
 do p=1,343
-	call get_filled_ar (ar)
+	call get_filled_ar (1,ar)
 	write (*, *) ar
 	i=int(ar(0))
 	j=int(ar(1))
 	k=int(ar(2))
 	l=int(ar(3))
 	vmatrix(i,j,k,l)=ar(4)
-	write(*,*) i,j,k,l,vmatrix(i,j,k,l)
+	!write(*,*) i,j,k,l,vmatrix(i,j,k,l)
 enddo
+call close_file()
+
+call open_file("data2.dat")
+h_0(12)=0.d0
+do p=1,12
+	call get_filled_ar (2,ar)
+	!write (*, *) ar
+	h_0(p) = ar(1)
+	write (*, *) h_0(p)	
+enddo
+
+
+return
 
 
 !interaction
@@ -123,25 +144,3 @@ enddo
 END FUNCTION factorial
 
 END PROGRAM WAFFLE
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
