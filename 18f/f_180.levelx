@@ -1,0 +1,27 @@
+! ---------- begin input for f_180.levelx
+L
+f_180
+s
+sdpn      
+  -1
+  -1
+y
+i 
+f_180
+n
+n
+n
+  0 10  2
+n
+  1  5  2
+n
+  1  5  2
+0
+0
+ 1
+  10
+n
+s
+y
+X
+! ---------- end input for f_180.levelx
