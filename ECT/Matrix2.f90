@@ -35,7 +35,7 @@ open(unit=2,file="eigen.dat")
 
 call open_file("data.dat")
 nS=12
-nP=8
+do nP=1,12
 nC=INT(factorial(nS)/(factorial(nP)*factorial(nS-nP)))
 
 
@@ -63,48 +63,46 @@ do i=2,nC
 enddo
 
 
-allocate (matrix(1:nC,1:nC),eig(1:nC),work(1:3*nC))
-
+allocate (matrix(1:nC,1:nC),eig(1:nC),work(1:5*nC))
 
 vmatrix=0.d0
+
+call open_file("data.dat")
 do p=1,343
 	call get_filled_ar (1,ar)
-	write (*, *) ar
 	i=int(ar(0))
 	j=int(ar(1))
 	k=int(ar(2))
 	l=int(ar(3))
 	vmatrix(i,j,k,l)=ar(4)
-	!write(*,*) i,j,k,l,vmatrix(i,j,k,l)
+	vmatrix(k,l,i,j)=vmatrix(i,j,k,l)
 enddo
 call close_file()
 
 call open_file("data2.dat")
-h_0(12)=0.d0
+
+
+h_0=0.d0
 do p=1,12
 	call get_filled_ar (2,ar)
-	!write (*, *) ar
 	h_0(p) = ar(1)
-	write (*, *) h_0(p)	
 enddo
-
-
-return
-
+call close_file()
 
 !interaction
 matrix=0.d0
 do i=1,nC  
 	do j=1,nC
 		do k=1,nP
-		do k2=k,nP
+		do k2=k+1,nP
 			do l=1,nP
-			do l2=l,nP
+			do l2=l+1,nP
 				p1=states(i,k)
 				p2=states(i,k2)
 				p3=states(j,l)
 				p4=states(j,l2)
 				matrix(i,j)=matrix(i,j)+vmatrix(p1,p2,p3,p4)
+				!write(*,*) vmatrix(p1,p2,p3,p4), p1, p2, p3 ,p4, i,j
 			enddo
 			enddo
 		enddo
@@ -120,15 +118,17 @@ do i=1,nC
 enddo
 work=0
 info=0
+write(*,*) 'Yeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee', nP, nC, nS
 
-call ssyev('v', 'u', nC , matrix, nC ,eig, work,3*nC, info )
-write(2,*) g, eig(1:nC)
-write(*,*) 'Yeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee', nP, nC, nS
-write(*,*) g, eig(1:nC)
+call ssyev('v', 'u', nC , matrix, nC ,eig, work,5*nC, info )
 
-!enddo
+write(2,*) 'fdhgfhgfghfhgfhgfhghgjhfgfgdhgghgfhfgh'
+write(2,*) eig(1:nC)
+write(*,*) nP,eig(1)
+
+deallocate(states,matrix,work,eig,vmatrix,h_0)
+enddo
 close(2)
-deallocate(states)
 RETURN
 
 
@@ -144,3 +144,25 @@ enddo
 END FUNCTION factorial
 
 END PROGRAM WAFFLE
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
