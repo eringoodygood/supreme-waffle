@@ -25,10 +25,10 @@ end interface c_interface
 
 
 real:: scaling
-real,allocatable:: matrix(:,:),eig(:),work(:),vmatrix(:,:,:,:),h_0(:)
+real,allocatable:: matrix(:,:),eig(:),work(:),vmatrix(:,:,:,:),h_0(:), degM(:)
 integer,allocatable::tvec1(:),tvec2(:)
 integer:: i,j,k,l,k2,l2,m1,m2,p,info,p1,p2,p3,p4
-integer:: nP, nS, nC,deg
+integer:: nP, nS, nC, deg, degold, maxN
 integer,allocatable::states(:,:)
 character:: unb
 real (c_float), dimension (0:5) :: ar
@@ -39,6 +39,9 @@ open(unit=12, file='energies.dat',status='replace',action='write')
 call open_file("data.dat")
 nS=12
 
+write(*,*) "Select the number of states you want"
+read(*,*) maxN
+allocate(degM(1:maxN))
 
 do nP=1,12
 
@@ -76,7 +79,7 @@ do nP=1,12
 	enddo
 
 
-	allocate (matrix(1:nC,1:nC),eig(1:nC),work(1:5*nC))
+	allocate (matrix(1:nC,1:nC),eig(1:nC),work(1:6*nC))
 
 	vmatrix=0.d0
 
@@ -159,20 +162,26 @@ do nP=1,12
 	info=0
 	write(*,*) '-----------------Oxygen-----------------', nP+16
 
-	call ssyev('v', 'u', nC , matrix, nC ,eig, work,5*nC, info )
+	call ssyev('v', 'u', nC , matrix, nC ,eig, work,6*nC, info )
 
 
 	!write(2,*) 'fdhgfhgfghfhgfhgfhghgjhfgfgdhgghgfhfgh'
 	!write(2,*) eig(1:nC)
-	write(*,*) 'Energy of the ground state',eig(1),'MeV'
-	
-	deg=1
-	do i=2,nC
-		if(abs(eig(i)-eig(1)).ge.0.001) exit
-		deg=deg+1
+	degold=1
+	do j=1, maxN
+		deg=1
+		degM(j)=eig(degold)
+		do i=degold+1,nC
+			if(abs(eig(i)-eig(degold)).ge.0.001) exit
+			deg=deg+1
+		enddo
+		
+		write(*,*) 'Energy of the state',j,"is",degM(j),'MeV'
+		write(*,'(A,f10.1)') 'The J is', (deg-1)/2.d0
+		degold=degold+deg
+		if(nS.eq.nP) exit
 	enddo
-	write(12,*) nP+16, eig(1)
-	write(*,'(A,f10.1)') 'The J is', (deg-1)/2.d0
+	write(12,*) nP+16, degM(1:maxN)
 	if(nP.gt.2) deallocate(tvec1,tvec2)
 	deallocate(states,matrix,work,eig,vmatrix,h_0)
 enddo
