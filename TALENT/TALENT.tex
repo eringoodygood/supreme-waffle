@@ -134,15 +134,17 @@ Before we meet at 2:30 your group should use this for our example of na23 and co
 
 \section{NuShellX$^\copyright$ portion of project}
 
+	\subsection{Comparison of \ce{^{18}O} and \ce{^{18}F} from NuShellX and our Shell model code}
 
+Perfect match for oxygen isotopes
 
-\subsection{A lot of neutron-rich isotope of Oxygen and Fluorine}
+	\subsection{A lot of neutron-rich isotopes of Oxygen and Fluorine}
 
 For USDB these agree quite well with the experimental results (when present) for a smaller sd-shell model. 
 
 
 
-\subsection{$^{30}$F in the pf-shell: woo hoo!}
+		\subsubsection{$^{30}$F in the pf-shell: woo hoo!}
 
 This uses the ``sdpf" model space and the ``sdpfu" interaction, which happened to be the first interaction on the list in that model space. 
 
@@ -173,9 +175,124 @@ $^{30}$F in the pf-shell: all neutrons allowed out of the d3/2 shell into pf-she
 
 
 
-\subsection{Some Spectroscopic Factors for Oxygen}
 
-See specsb.lsf text file for results from \ce{^{23}O^{gnd}} to \ce{^{22}O^{any state}}
+	\subsection{Excited negative parity states in \ce{^{25}O} and \ce{^{25}F}?}
+	
+No, these do not exist because we are working in the sd-shell. 
+
+	\subsection{Using monopole interactions to calculate the energies for the ground states of \ce{^{22-25}O} assuming a single Slater determinant for each. Compare the results of the last problem to the full sd model space results and experiment}
+	
+	\begin{center}
+	\begin{tabular}{| l | c | r | r | r |}
+	\hline
+	   ... &\ce{^{22}O} & \ce{^{23}O} & \ce{^{24}O} & \ce{^{25}O} \\
+	   \hline
+	Previous problem &  & & & \\
+	\hline
+	Full sd model space (NuShellX) &  -32.429 MeV& -35.479 MeV  &  -40.088 MeV & -39.305 MeV  \\
+	\hline
+	Experiment & & & & \\
+	\hline
+\end{tabular}
+\end{center}	
+
+
+
+
+	\subsection{Some Spectroscopic Factors for Oxygen}
+	\begin{figure}
+\includegraphics[width=\textwidth]{o23specs.png}
+\caption{Oxygen 23 orbital occupations for the first 3 excited states from the *.occ file}
+\end{figure}
+		
+		\subsubsection{Spectroscopic factors for  \ce{^{23}O^{gnd}} to \ce{^{22}O^{any state}}}
+
+The total summed spectroscopic factor ($C^2S$)is 6.1420. The maximum SF should be 7. 
+
+For the ground state we would expect (with an excess of 7 neutrons) for the 0d5/2 shell to be full and the 1s1/2 to have one neutron. 
+
+
+		\begin{figure}
+\includegraphics[width=\textwidth]{o24specs.png}
+\caption{Oxygen 24 orbital occupations for the first 4 excited states from the *.occ file}
+\end{figure}
+
+		\subsubsection{Spectroscopic factors for  \ce{^{23}O^{gnd}} to \ce{^{24}O^{any state}}}
+		
+			\begin{center}
+	\begin{tabular}{ r | l }
+	State in \ce{^{24}O} & $(C^2S)$ \\
+	\hline
+	\hline
+	0+  s1/2& 1.8587 \\
+	1+  s1/2& 0.0342 \\
+	1+  d3/2& 0.9391 \\
+	2+  d3/2& 0.9671 \\
+	2+  d5/2& 0.0476 \\
+	3+ d5/2& 0.0206 \\
+	\hline
+	total sum & 3.8467\\
+\end{tabular}
+\end{center}
+
+
+
+
+		\subsubsection{Spectroscopic factor for  \ce{^{23}O^{5/2+(1)}} to \ce{^{22}O^{0+(1)}}}
+	
+The calculated value is 0.590. It is small because this requires the neutron to carry away $J=5/2$ in angular momentum and corresponds to a less energetically favorable movement of particles among the orbitals. Starting with 2n in the 1s1/2 shell and 5n in the 2d5/2 shell, this particular decay would require the neutron to eject from the 0d5/2 shell and a drop of the neutron pair from the 1s1/2 orbital. The more energetically favorable ejection would just require the movement of both neutrons from the 1s1/2 orbital: one being ejected with $J=0$ and one dropping down into the 0d5/2 orbital. 
+
+	\subsection{Use the interaction wspot to obtain the single particle decay width for the  \ce{^{23}O^{5/2+(1)}} state using the experimental neutron separation energy as a constraint. Combine this with the result of the last problem to obtain its neutron decay width and compare to experiment.}
+	
+The settings in the wspot *.dai file were: 
+\begin{center}
+ \begin{tabular}{l l l l l}
+ 22 & 8 & 1 & 0 & A, Z of target and A, Z of projectile\\
+ 0.04 & 0.04 & 0.1 & 5.0& $E_{min}, E_{max}, V_{min}, V_{max}$  \\
+ 0 & 2 & 5 & & Quantum numbers: n, l, m \\
+ \end{tabular}
+\end{center}
+The energy values were chosen using the experimental value for the neutron separation energy for the 5/2+ level of \ce{^{23}O} was $S_n=40$ keV, and we used the spectroscopic factor $(C^2S)=0.0590$ calculated in the previous section. This converged to a value of $\Gamma_{s.p.}=0.1800$keV. Using the equation for neutron decay width: 
+\begin{equation}
+\Gamma_n=(C^2S)\Gamma_{s.p.}=(0.0590)(0.1800)=0.01062 \text{keV}=10.62 \text{eV}
+\end{equation}
+This agrees quite well with the experimental width of $\Gamma_n=10$eV. 
+
+	\subsection{Calculate the neutron decay width of the  \ce{^{25}O^{3/2+(1)}} state and compare to experiment. Use the experimental neutron separation energy as a constraint.}
+
+The settings in the wspot *.dai file were: 
+\begin{center}
+ \begin{tabular}{l l l l l}
+ 24 & 8 & 1 & 0 & A, Z of target and A, Z of projectile\\
+ 0.770 & 0.770 & 0.0 & 2.0& $E_{min}, E_{max}, V_{min}, V_{max}$  \\
+ 0 & 2 & 5 & & Quantum numbers: n, l, m \\
+ \end{tabular}
+\end{center}
+
+Experimental neutron separation energy: $S_n=770$ keV
+
+This converges to a value of $\Gamma_{s.p.}=138.6$ keV. 
+
+Spectroscopic factors: from the USDB calculation in the article $(C^2S)=0.95$
+
+\qquad From the usdb interaction from me using NuShellX: $(C^2S)=0.9721$
+
+
+\begin{equation}
+\Gamma_n=(C^2S)\Gamma_{s.p.}=(138.6)(0.9721)=137.733 \text{keV}
+\end{equation}
+
+The two different experimental values quoted in the same article for $\Gamma_n$ were 172 keV and 88 keV. We were right in the middle!
+
+
+
+
+	\subsection{Calculate the gamma decay of \ce{^{22}O} for levels up to 6 MeV and compare to experiment. Calculate the B(E2) for Coulex to the $2^+$ state in \ce{^{22}O} and compare with experiment.}
+
+	\subsection{Calculate the magnetic moment for the $1/2^+_1$ ground state of \ce{^{23}O} and compare to the single-particle (Schmidt) value}
+	
+	\subsection{Calculate the Fermi and Gamow-Teller $\beta$ decay of \ce{^{22}O}}
+
 
 
 \end{document}
